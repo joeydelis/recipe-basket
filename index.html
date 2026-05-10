@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipe Basket Finder</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Recipe Basket Finder</p>
+            <h1>Find the cheapest nearby store for a recipe.</h1>
+          </div>
+          <button class="ghost-button" id="sampleButton" type="button">Load sample</button>
+        </header>
+
+        <section class="recipe-panel" aria-label="Recipe input">
+          <div class="input-header">
+            <label for="recipeInput">Recipe or ingredient list</label>
+            <span id="parseCount">0 ingredients</span>
+          </div>
+          <textarea
+            id="recipeInput"
+            spellcheck="true"
+            placeholder="Paste a recipe or ingredient list, for example:&#10;2 lb chicken thighs&#10;1 cup rice&#10;1 onion&#10;3 cloves garlic&#10;1 can coconut milk"
+          ></textarea>
+
+          <div class="controls">
+            <label class="field">
+              <span>ZIP or address</span>
+              <input id="zipInput" placeholder="44094 or 123 Main St, Willoughby, OH" value="44094" />
+            </label>
+            <label class="field">
+              <span>Radius</span>
+              <select id="radiusInput">
+                <option value="3">3 miles</option>
+                <option value="5" selected>5 miles</option>
+                <option value="10">10 miles</option>
+                <option value="25">25 miles</option>
+              </select>
+            </label>
+            <label class="toggle">
+              <input id="pantryToggle" type="checkbox" checked />
+              <span>Skip pantry basics</span>
+            </label>
+            <button class="primary-button" id="searchButton" type="button">Compare stores</button>
+          </div>
+        </section>
+
+        <section class="results-grid">
+          <article class="best-store" id="bestStore" aria-live="polite">
+            <div class="empty-state">
+              <div class="basket-art" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <h2>Paste ingredients to price a full basket.</h2>
+              <p>The app will parse quantities, compare store baskets, and show the cheapest complete option nearby.</p>
+            </div>
+          </article>
+
+          <article class="ingredients-card">
+            <div class="card-header">
+              <h2>Parsed ingredients</h2>
+              <button class="icon-button" id="clearButton" type="button" aria-label="Clear recipe">
+                <span aria-hidden="true">x</span>
+              </button>
+            </div>
+            <div class="ingredient-list" id="ingredientList"></div>
+          </article>
+        </section>
+      </section>
+
+      <aside class="store-panel">
+        <div class="card-header">
+          <h2>Store comparison</h2>
+          <span class="muted" id="storeCount">0 stores</span>
+        </div>
+        <div id="storeList" class="store-list"></div>
+      </aside>
+    </main>
+
+    <template id="ingredientTemplate">
+      <div class="ingredient-row">
+        <div>
+          <strong></strong>
+          <span></span>
+        </div>
+        <button type="button">remove</button>
+      </div>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

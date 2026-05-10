@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "functions": {
+    "api/stores.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/index.html"
+    }
+  ]
+}

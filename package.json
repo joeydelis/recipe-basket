@@ -1,0 +1,13 @@
+{
+  "name": "recipe-basket",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Find nearby grocery stores that can make a recipe for the lowest estimated basket price.",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
