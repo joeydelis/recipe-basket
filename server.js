@@ -60,7 +60,7 @@ function milesBetween(from, to) {
 }
 
 async function fetchJson(url, options = {}) {
-  const timeoutMs = options.timeoutMs || 7000;
+  const timeoutMs = options.timeoutMs || 5000;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   const response = await fetch(url, {
@@ -83,7 +83,7 @@ async function fetchJson(url, options = {}) {
 async function geocode(location) {
   const zipOnly = location.match(/^\s*(\d{5})\s*$/);
   if (zipOnly) {
-    const zipData = await fetchJson(`https://api.zippopotam.us/us/${zipOnly[1]}`, { timeoutMs: 5000 });
+    const zipData = await fetchJson(`https://api.zippopotam.us/us/${zipOnly[1]}`, { timeoutMs: 2500 });
     const place = zipData.places?.[0];
     if (place) {
       return {
@@ -101,12 +101,12 @@ async function geocode(location) {
     location.replace(/\b(supercenter|supermarket|grocery|store|market)\b/gi, "").replace(/\s+/g, " ").trim(),
   ].filter(Boolean))];
 
-  for (const variant of variants) {
+  for (const variant of variants.slice(0, 2)) {
     const query = /\b\d{5}\b/.test(variant) && !/[a-z]/i.test(variant.replace(/\b\d{5}\b/g, ""))
     ? `${variant}, United States`
     : variant;
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&countrycodes=us&q=${encodeURIComponent(query)}`;
-    const results = await fetchJson(url, { timeoutMs: 6000 });
+    const results = await fetchJson(url, { timeoutMs: 3000 });
     if (results.length) return results[0];
   }
 
@@ -176,7 +176,7 @@ async function queryOverpass(center, radiusMiles) {
   return Promise.any(
     endpoints.map((endpoint) =>
       fetchJson(`${endpoint}?data=${encodeURIComponent(query)}`, {
-        timeoutMs: 7000,
+        timeoutMs: 4500,
       }),
     ),
   );
@@ -253,7 +253,7 @@ function dedupeStores(stores) {
   });
 }
 
-async function lookupStores(location, radiusInput) {
+async function lookupStores(location, radiusInput, options = {}) {
   const radius = Math.min(Math.max(Number(radiusInput || 5), 1), 50);
   if (!location) {
     return { status: 400, payload: { stores: [], message: "Enter a ZIP code or address." } };
@@ -286,7 +286,7 @@ async function lookupStores(location, radiusInput) {
       ...(data.elements || []).map((element) => normalizeStore(element, center)),
     ].filter(Boolean);
 
-    if ((!mappedStores.length || overpassError) && !searchedStore) {
+    if (!options.serverless && (!mappedStores.length || overpassError) && !searchedStore) {
       mappedStores = mappedStores.concat(await searchNamedChains(place.display_name || location, center, radius));
     }
 
