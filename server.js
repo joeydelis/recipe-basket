@@ -60,7 +60,7 @@ function milesBetween(from, to) {
 }
 
 async function fetchJson(url, options = {}) {
-  const timeoutMs = options.timeoutMs || 12000;
+  const timeoutMs = options.timeoutMs || 7000;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   const response = await fetch(url, {
@@ -83,7 +83,7 @@ async function fetchJson(url, options = {}) {
 async function geocode(location) {
   const zipOnly = location.match(/^\s*(\d{5})\s*$/);
   if (zipOnly) {
-    const zipData = await fetchJson(`https://api.zippopotam.us/us/${zipOnly[1]}`, { timeoutMs: 8000 });
+    const zipData = await fetchJson(`https://api.zippopotam.us/us/${zipOnly[1]}`, { timeoutMs: 5000 });
     const place = zipData.places?.[0];
     if (place) {
       return {
@@ -106,7 +106,7 @@ async function geocode(location) {
     ? `${variant}, United States`
     : variant;
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&countrycodes=us&q=${encodeURIComponent(query)}`;
-    const results = await fetchJson(url, { timeoutMs: 10000 });
+    const results = await fetchJson(url, { timeoutMs: 6000 });
     if (results.length) return results[0];
   }
 
@@ -118,13 +118,13 @@ function sleep(ms) {
 }
 
 async function searchNamedChains(location, center, radiusMiles) {
-  const searchableChains = chainProfiles.slice(0, 8);
+  const searchableChains = chainProfiles.slice(0, 3);
   const stores = [];
 
   for (const profile of searchableChains) {
     try {
       const url = `https://nominatim.openstreetmap.org/search?format=json&limit=3&countrycodes=us&q=${encodeURIComponent(`${profile.label} near ${location}`)}`;
-      const results = await fetchJson(url, { timeoutMs: 7000 });
+      const results = await fetchJson(url, { timeoutMs: 4000 });
       stores.push(...results
       .map((place) => {
         const lat = Number(place.lat);
@@ -144,7 +144,7 @@ async function searchNamedChains(location, center, radiusMiles) {
         };
       })
       .filter(Boolean));
-      await sleep(1100);
+      await sleep(350);
     } catch (error) {
       if (String(error.message).includes("429")) break;
     }
@@ -176,7 +176,7 @@ async function queryOverpass(center, radiusMiles) {
   return Promise.any(
     endpoints.map((endpoint) =>
       fetchJson(`${endpoint}?data=${encodeURIComponent(query)}`, {
-        timeoutMs: 15000,
+        timeoutMs: 7000,
       }),
     ),
   );
