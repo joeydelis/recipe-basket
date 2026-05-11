@@ -4,6 +4,7 @@ const path = require("node:path");
 
 const PORT = Number(process.env.PORT || 3036);
 const ROOT = __dirname;
+const PUBLIC_ROOT = path.join(ROOT, "public");
 const responseCache = new Map();
 
 const chainProfiles = [
@@ -330,9 +331,9 @@ async function handleStores(req, res) {
 async function serveStatic(req, res) {
   const requestUrl = new URL(req.url, `http://${req.headers.host}`);
   const pathname = requestUrl.pathname === "/" ? "/index.html" : requestUrl.pathname;
-  const filePath = path.normalize(path.join(ROOT, pathname));
+  const filePath = path.normalize(path.join(PUBLIC_ROOT, pathname));
 
-  if (!filePath.startsWith(ROOT)) {
+  if (!filePath.startsWith(PUBLIC_ROOT)) {
     res.writeHead(403);
     res.end("Forbidden");
     return;
