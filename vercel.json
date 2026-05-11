@@ -1,3 +1,27 @@
 {
-  "version": 2
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    },
+    {
+      "src": "/(.*\\.(?:css|js|ico|png|jpg|jpeg|svg|webp))",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/.*",
+      "dest": "/public/index.html"
+    }
+  ]
 }
